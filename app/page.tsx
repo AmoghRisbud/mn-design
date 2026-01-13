@@ -11,8 +11,11 @@ export default function HomePage() {
   const parallaxRef = useRef<HTMLDivElement>(null);
   const featuredRef = useRef<HTMLDivElement>(null);
   const showcaseRef = useRef<HTMLDivElement>(null);
+  const expertiseRef = useRef<HTMLDivElement>(null);
   const [recentWorks, setRecentWorks] = useState<HomeShowcase[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeCardIndex, setActiveCardIndex] = useState(0);
+  const [heroImageIndex, setHeroImageIndex] = useState(0);
 
   useEffect(() => {
     const fetchRecentWorks = async () => {
@@ -29,6 +32,64 @@ export default function HomePage() {
 
     fetchRecentWorks();
   }, []);
+
+  // Auto-rotate hero background images
+  useEffect(() => {
+    const heroInterval = setInterval(() => {
+      setHeroImageIndex((prev) => {
+        const next = (prev + 1) % 3;
+        console.log('Hero image rotating:', prev, '→', next);
+        return next;
+      });
+    }, 5000); // Change image every 5 seconds
+
+    return () => clearInterval(heroInterval);
+  }, []);
+
+  // Scroll-driven horizontal card transitions - proper locking
+  useEffect(() => {
+    let isTransitioning = false;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (!expertiseRef.current || isTransitioning) return;
+
+      const section = expertiseRef.current;
+      const rect = section.getBoundingClientRect();
+      
+      // More aggressive viewport detection
+      const isInView = rect.top < window.innerHeight * 0.4 && rect.bottom > window.innerHeight * 0.2;
+
+      if (isInView) {
+        const scrollingDown = e.deltaY > 0;
+        const scrollingUp = e.deltaY < 0;
+
+        // Only allow scrolling if we haven't reached the end
+        if ((scrollingDown && activeCardIndex < 3) || (scrollingUp && activeCardIndex > 0)) {
+          e.preventDefault();
+          e.stopPropagation();
+          isTransitioning = true;
+          
+          if (scrollingDown) {
+            console.log('→ Card transition:', activeCardIndex, '→', activeCardIndex + 1);
+            setActiveCardIndex((prev) => Math.min(prev + 1, 3));
+          } else {
+            console.log('← Card transition:', activeCardIndex, '→', activeCardIndex - 1);
+            setActiveCardIndex((prev) => Math.max(prev - 1, 0));
+          }
+
+          setTimeout(() => {
+            isTransitioning = false;
+          }, 850);
+        }
+      }
+    };
+
+    window.addEventListener("wheel", handleWheel, { passive: false });
+
+    return () => {
+      window.removeEventListener("wheel", handleWheel);
+    };
+  }, [activeCardIndex]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -60,16 +121,56 @@ export default function HomePage() {
       <Navbar />
       <main className="overflow-hidden">
         {/* Hero Section - Full Width Image Placeholder */}
-        <section className="relative h-screen w-full">
-          {/* IMAGE PLACEHOLDER 1: Main hero image (1920x1080px recommended) */}
+        <section className="relative h-screen w-full overflow-hidden">
+          {/* Rotating Hero Images */}
           <div ref={parallaxRef} className="absolute inset-0">
-            <Image
-              src="/images/heroSection-main.jpg"
-              alt="MN Design Architecture"
-              fill
-              className="object-cover"
-              priority
-            />
+            {/* Hero Image 1 */}
+            <div 
+              className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
+                heroImageIndex === 0 ? 'opacity-100' : 'opacity-0'
+              }`}
+              style={{ pointerEvents: heroImageIndex === 0 ? 'auto' : 'none' }}
+            >
+              <Image
+                src="/images/heroSection-main.jpg"
+                alt="MN Design Architecture 1"
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+
+            {/* Hero Image 2 */}
+            <div 
+              className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
+                heroImageIndex === 1 ? 'opacity-100' : 'opacity-0'
+              }`}
+              style={{ pointerEvents: heroImageIndex === 1 ? 'auto' : 'none' }}
+            >
+              <Image
+                src="/images/heroSection-hero2.jpg"
+                alt="MN Design Architecture 2"
+                fill
+                className="object-cover"
+              />
+            </div>
+
+            {/* Hero Image 3 */}
+            <div 
+              className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
+                heroImageIndex === 2 ? 'opacity-100' : 'opacity-0'
+              }`}
+              style={{ pointerEvents: heroImageIndex === 2 ? 'auto' : 'none' }}
+            >
+              <Image
+                src="/images/heroSection-hero3.jpg"
+                alt="MN Design Architecture 3"
+                fill
+                className="object-cover"
+              />
+            </div>
+
+            {/* Dark overlay */}
             <div className="absolute inset-0 bg-black/60"></div>
           </div>
 
@@ -165,8 +266,8 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Services Section */}
-        <section className="bg-white py-32">
+        {/* Services Section - Card Carousel */}
+        <section ref={expertiseRef} className="bg-white py-32">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-24 scroll-reveal">
               <p className="text-gray-500 text-sm tracking-[0.3em] uppercase mb-4 font-light">
@@ -178,105 +279,101 @@ export default function HomePage() {
               <div className="w-16 h-px bg-gray-300 mx-auto"></div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-0 border border-gray-200">
-              <div className="group relative border-r border-b border-gray-200 p-12 hover:bg-gray-50 transition-all duration-500 scroll-reveal">
-                <div className="absolute top-0 left-0 w-0 h-px bg-black group-hover:w-full transition-all duration-700"></div>
-                <div className="mb-8">
-                  <svg
-                    className="w-12 h-12 text-gray-900 opacity-80"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={0.5}
-                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                    />
-                  </svg>
-                </div>
-                <h3 className="text-2xl font-light mb-4 text-gray-900">
-                  Residential
-                </h3>
-                <p className="text-gray-600 leading-relaxed text-sm">
-                  Bespoke homes that reflect your lifestyle and aspirations
-                </p>
+            {/* Card Carousel Container */}
+            <div className="relative mx-auto max-w-3xl">
+              <div className="expertise-cards-wrapper relative" style={{ minHeight: '500px' }}>
+                {[
+                  {
+                    icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
+                    title: "Residential",
+                    description: "Bespoke homes that reflect your lifestyle and aspirations",
+                  },
+                  {
+                    icon: "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4",
+                    title: "Commercial",
+                    description: "Innovative spaces that drive business success",
+                  },
+                  {
+                    icon: "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253",
+                    title: "Institutional",
+                    description: "Public spaces designed for community impact",
+                  },
+                  {
+                    icon: "M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7",
+                    title: "Urban Planning",
+                    description: "Strategic development for sustainable communities",
+                  },
+                ].map((card, index) => {
+                  // Determine card position for horizontal carousel
+                  let cardClass = "card-hidden";
+                  
+                  if (index === activeCardIndex) {
+                    cardClass = "card-active"; // Current visible card
+                  } else if (index < activeCardIndex) {
+                    cardClass = "card-before"; // Cards already seen (go left)
+                  } else {
+                    cardClass = "card-next"; // Cards coming up (from right)
+                  }
+
+                  return (
+                    <div
+                      key={index}
+                      className={`expertise-card ${cardClass}`}
+                    >
+                      <div className="w-full max-w-3xl px-8 md:px-16">
+                        <div className="flex items-start gap-8 md:gap-16">
+                          {/* Number indicator - like Artel Studios */}
+                          <div className="flex-shrink-0 pt-2">
+                            <span className="text-7xl md:text-8xl font-light text-blue-600/15">
+                              {String(index + 1).padStart(2, "0")}
+                            </span>
+                          </div>
+                          
+                          {/* Content */}
+                          <div className="flex-1">
+                            <div className="mb-8">
+                              <svg
+                                className="w-16 h-16 text-blue-600"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={1.5}
+                                  d={card.icon}
+                                />
+                              </svg>
+                            </div>
+                            <h3 className="text-4xl md:text-5xl font-light mb-6 text-gray-900">
+                              {card.title}
+                            </h3>
+                            <p className="text-gray-600 leading-relaxed text-lg max-w-2xl">
+                              {card.description}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
 
-              <div className="group relative border-r border-b border-gray-200 p-12 hover:bg-gray-50 transition-all duration-500 scroll-reveal animation-delay-100">
-                <div className="absolute top-0 left-0 w-0 h-px bg-black group-hover:w-full transition-all duration-700"></div>
-                <div className="mb-8">
-                  <svg
-                    className="w-12 h-12 text-gray-900 opacity-80"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={0.5}
-                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                    />
-                  </svg>
-                </div>
-                <h3 className="text-2xl font-light mb-4 text-gray-900">
-                  Commercial
-                </h3>
-                <p className="text-gray-600 leading-relaxed text-sm">
-                  Innovative spaces that drive business success
-                </p>
-              </div>
-
-              <div className="group relative border-r border-b border-gray-200 p-12 hover:bg-gray-50 transition-all duration-500 scroll-reveal animation-delay-200">
-                <div className="absolute top-0 left-0 w-0 h-px bg-black group-hover:w-full transition-all duration-700"></div>
-                <div className="mb-8">
-                  <svg
-                    className="w-12 h-12 text-gray-900 opacity-80"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={0.5}
-                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                    />
-                  </svg>
-                </div>
-                <h3 className="text-2xl font-light mb-4 text-gray-900">
-                  Institutional
-                </h3>
-                <p className="text-gray-600 leading-relaxed text-sm">
-                  Public spaces designed for community impact
-                </p>
-              </div>
-
-              <div className="group relative border-b border-gray-200 p-12 hover:bg-gray-50 transition-all duration-500 scroll-reveal animation-delay-300">
-                <div className="absolute top-0 left-0 w-0 h-px bg-black group-hover:w-full transition-all duration-700"></div>
-                <div className="mb-8">
-                  <svg
-                    className="w-12 h-12 text-gray-900 opacity-80"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={0.5}
-                      d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
-                    />
-                  </svg>
-                </div>
-                <h3 className="text-2xl font-light mb-4 text-gray-900">
-                  Urban Planning
-                </h3>
-                <p className="text-gray-600 leading-relaxed text-sm">
-                  Strategic development for sustainable communities
-                </p>
+              {/* Progress Indicators */}
+              <div className="flex justify-center gap-3 mt-12">
+                {[0, 1, 2, 3].map((index) => (
+                  <button
+                    key={index}
+                    onClick={() => setActiveCardIndex(index)}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      activeCardIndex === index
+                        ? "w-12 bg-blue-600"
+                        : "w-2 bg-gray-300 hover:bg-gray-400"
+                    }`}
+                    aria-label={`Go to card ${index + 1}`}
+                  />
+                ))}
               </div>
             </div>
           </div>
