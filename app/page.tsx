@@ -38,7 +38,7 @@ export default function HomePage() {
     const heroInterval = setInterval(() => {
       setHeroImageIndex((prev) => {
         const next = (prev + 1) % 3;
-        console.log('Hero image rotating:', prev, '→', next);
+        console.log("Hero image rotating:", prev, "→", next);
         return next;
       });
     }, 5000); // Change image every 5 seconds
@@ -55,25 +55,40 @@ export default function HomePage() {
 
       const section = expertiseRef.current;
       const rect = section.getBoundingClientRect();
-      
+
       // More aggressive viewport detection
-      const isInView = rect.top < window.innerHeight * 0.4 && rect.bottom > window.innerHeight * 0.2;
+      const isInView =
+        rect.top < window.innerHeight * 0.4 &&
+        rect.bottom > window.innerHeight * 0.2;
 
       if (isInView) {
         const scrollingDown = e.deltaY > 0;
         const scrollingUp = e.deltaY < 0;
 
         // Only allow scrolling if we haven't reached the end
-        if ((scrollingDown && activeCardIndex < 3) || (scrollingUp && activeCardIndex > 0)) {
+        if (
+          (scrollingDown && activeCardIndex < 3) ||
+          (scrollingUp && activeCardIndex > 0)
+        ) {
           e.preventDefault();
           e.stopPropagation();
           isTransitioning = true;
-          
+
           if (scrollingDown) {
-            console.log('→ Card transition:', activeCardIndex, '→', activeCardIndex + 1);
+            console.log(
+              "→ Card transition:",
+              activeCardIndex,
+              "→",
+              activeCardIndex + 1
+            );
             setActiveCardIndex((prev) => Math.min(prev + 1, 3));
           } else {
-            console.log('← Card transition:', activeCardIndex, '→', activeCardIndex - 1);
+            console.log(
+              "← Card transition:",
+              activeCardIndex,
+              "→",
+              activeCardIndex - 1
+            );
             setActiveCardIndex((prev) => Math.max(prev - 1, 0));
           }
 
@@ -125,11 +140,11 @@ export default function HomePage() {
           {/* Rotating Hero Images */}
           <div ref={parallaxRef} className="absolute inset-0">
             {/* Hero Image 1 */}
-            <div 
+            <div
               className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
-                heroImageIndex === 0 ? 'opacity-100' : 'opacity-0'
+                heroImageIndex === 0 ? "opacity-100" : "opacity-0"
               }`}
-              style={{ pointerEvents: heroImageIndex === 0 ? 'auto' : 'none' }}
+              style={{ pointerEvents: heroImageIndex === 0 ? "auto" : "none" }}
             >
               <Image
                 src="/images/heroSection-main.jpg"
@@ -141,11 +156,11 @@ export default function HomePage() {
             </div>
 
             {/* Hero Image 2 */}
-            <div 
+            <div
               className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
-                heroImageIndex === 1 ? 'opacity-100' : 'opacity-0'
+                heroImageIndex === 1 ? "opacity-100" : "opacity-0"
               }`}
-              style={{ pointerEvents: heroImageIndex === 1 ? 'auto' : 'none' }}
+              style={{ pointerEvents: heroImageIndex === 1 ? "auto" : "none" }}
             >
               <Image
                 src="/images/heroSection-hero2.jpg"
@@ -156,11 +171,11 @@ export default function HomePage() {
             </div>
 
             {/* Hero Image 3 */}
-            <div 
+            <div
               className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
-                heroImageIndex === 2 ? 'opacity-100' : 'opacity-0'
+                heroImageIndex === 2 ? "opacity-100" : "opacity-0"
               }`}
-              style={{ pointerEvents: heroImageIndex === 2 ? 'auto' : 'none' }}
+              style={{ pointerEvents: heroImageIndex === 2 ? "auto" : "none" }}
             >
               <Image
                 src="/images/heroSection-hero3.jpg"
@@ -281,17 +296,22 @@ export default function HomePage() {
 
             {/* Card Carousel Container */}
             <div className="relative mx-auto max-w-3xl">
-              <div className="expertise-cards-wrapper relative" style={{ minHeight: '500px' }}>
+              <div
+                className="expertise-cards-wrapper relative"
+                style={{ minHeight: "500px" }}
+              >
                 {[
                   {
                     icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
                     title: "Residential",
-                    description: "Bespoke homes that reflect your lifestyle and aspirations",
+                    description:
+                      "Bespoke homes that reflect your lifestyle and aspirations",
                   },
                   {
                     icon: "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4",
                     title: "Commercial",
-                    description: "Innovative spaces that drive business success",
+                    description:
+                      "Innovative spaces that drive business success",
                   },
                   {
                     icon: "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253",
@@ -301,12 +321,13 @@ export default function HomePage() {
                   {
                     icon: "M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7",
                     title: "Urban Planning",
-                    description: "Strategic development for sustainable communities",
+                    description:
+                      "Strategic development for sustainable communities",
                   },
                 ].map((card, index) => {
                   // Determine card position for horizontal carousel
                   let cardClass = "card-hidden";
-                  
+
                   if (index === activeCardIndex) {
                     cardClass = "card-active"; // Current visible card
                   } else if (index < activeCardIndex) {
@@ -316,10 +337,7 @@ export default function HomePage() {
                   }
 
                   return (
-                    <div
-                      key={index}
-                      className={`expertise-card ${cardClass}`}
-                    >
+                    <div key={index} className={`expertise-card ${cardClass}`}>
                       <div className="w-full max-w-3xl px-8 md:px-16">
                         <div className="flex items-start gap-8 md:gap-16">
                           {/* Number indicator - like Artel Studios */}
@@ -328,7 +346,7 @@ export default function HomePage() {
                               {String(index + 1).padStart(2, "0")}
                             </span>
                           </div>
-                          
+
                           {/* Content */}
                           <div className="flex-1">
                             <div className="mb-8">
