@@ -1,51 +1,51 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { CreateProjectInput } from '@/lib/types';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { CreateProjectInput } from "@/lib/types";
 
 export default function NewProjectPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState<CreateProjectInput>({
-    title: '',
-    description: '',
-    location: '',
+    title: "",
+    description: "",
+    location: "",
     year: new Date().getFullYear(),
-    category: 'residential',
+    category: "residential",
     images: [],
     featured: false,
-    area: '',
-    client: '',
+    area: "",
+    client: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (formData.images.length === 0) {
-      alert('Please upload at least one image');
+      alert("Please upload at least one image");
       return;
     }
-    
+
     setLoading(true);
 
     try {
-      const res = await fetch('/api/admin/projects', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/admin/projects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
       if (res.ok) {
-        router.push('/admin/projects');
+        router.push("/admin/projects");
       } else {
         const error = await res.json();
-        alert(error.error || 'Failed to create project');
+        alert(error.error || "Failed to create project");
       }
     } catch (error) {
-      console.error('Error creating project:', error);
-      alert('Failed to create project');
+      console.error("Error creating project:", error);
+      alert("Failed to create project");
     } finally {
       setLoading(false);
     }
@@ -59,47 +59,51 @@ export default function NewProjectPage() {
 
     try {
       const uploadPromises = Array.from(files).map(async (file) => {
-        console.log('Uploading file:', file.name);
-        
-        const formData = new FormData();
-        formData.append('file', file);
+        console.log("Uploading file:", file.name);
 
-        const res = await fetch('/api/admin/upload', {
-          method: 'POST',
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const res = await fetch("/api/admin/upload", {
+          method: "POST",
           body: formData,
         });
 
         if (res.ok) {
           const data = await res.json();
-          console.log('Upload successful:', data.url);
+          console.log("Upload successful:", data.url);
           return data.url;
         } else {
           const error = await res.json();
-          console.error('Upload failed:', error);
-          throw new Error(error.error || 'Failed to upload image');
+          console.error("Upload failed:", error);
+          throw new Error(error.error || "Failed to upload image");
         }
       });
 
       const uploadedUrls = await Promise.all(uploadPromises);
-      
-      setFormData(prev => ({
+
+      setFormData((prev) => ({
         ...prev,
         images: [...prev.images, ...uploadedUrls],
       }));
 
-      console.log('All uploads completed successfully');
+      console.log("All uploads completed successfully");
     } catch (error) {
-      console.error('Error uploading images:', error);
-      alert(`Failed to upload images: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error("Error uploading images:", error);
+      alert(
+        `Failed to upload images: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
     } finally {
       setUploading(false);
       // Reset file input
-      e.target.value = '';
+      e.target.value = "";
     }
   };
 
   const removeImage = (index: number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       images: prev.images.filter((_, i) => i !== index),
     }));
@@ -109,7 +113,10 @@ export default function NewProjectPage() {
     <div>
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Add New Project</h1>
 
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md max-w-3xl">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-8 rounded-lg shadow-md max-w-3xl"
+      >
         <div className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -119,8 +126,10 @@ export default function NewProjectPage() {
               type="text"
               required
               value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
+              }
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-600 focus:border-transparent"
             />
           </div>
 
@@ -132,8 +141,10 @@ export default function NewProjectPage() {
               required
               rows={5}
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-600 focus:border-transparent"
             />
           </div>
 
@@ -145,8 +156,10 @@ export default function NewProjectPage() {
               <select
                 required
                 value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                onChange={(e) =>
+                  setFormData({ ...formData, category: e.target.value as any })
+                }
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-600 focus:border-transparent"
               >
                 <option value="residential">Residential</option>
                 <option value="commercial">Commercial</option>
@@ -165,8 +178,10 @@ export default function NewProjectPage() {
                 min="1900"
                 max={new Date().getFullYear() + 5}
                 value={formData.year}
-                onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                onChange={(e) =>
+                  setFormData({ ...formData, year: parseInt(e.target.value) })
+                }
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-600 focus:border-transparent"
               />
             </div>
           </div>
@@ -180,8 +195,10 @@ export default function NewProjectPage() {
                 type="text"
                 required
                 value={formData.location}
-                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                onChange={(e) =>
+                  setFormData({ ...formData, location: e.target.value })
+                }
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-600 focus:border-transparent"
               />
             </div>
 
@@ -192,9 +209,11 @@ export default function NewProjectPage() {
               <input
                 type="text"
                 value={formData.area}
-                onChange={(e) => setFormData({ ...formData, area: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, area: e.target.value })
+                }
                 placeholder="e.g., 5,000 sq ft"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-600 focus:border-transparent"
               />
             </div>
           </div>
@@ -206,8 +225,10 @@ export default function NewProjectPage() {
             <input
               type="text"
               value={formData.client}
-              onChange={(e) => setFormData({ ...formData, client: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              onChange={(e) =>
+                setFormData({ ...formData, client: e.target.value })
+              }
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-600 focus:border-transparent"
             />
           </div>
 
@@ -217,15 +238,27 @@ export default function NewProjectPage() {
             </label>
             <div className="mb-4">
               <div className="flex items-center justify-center w-full">
-                <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-blue-300 border-dashed rounded-lg cursor-pointer bg-blue-50 hover:bg-blue-100 transition-colors">
+                <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-slate-300 border-dashed rounded-lg cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors">
                   <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                    <svg className="w-10 h-10 mb-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    <svg
+                      className="w-10 h-10 mb-3 text-slate-700"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                      />
                     </svg>
-                    <p className="mb-2 text-sm text-blue-600 font-semibold">
-                      {uploading ? 'Uploading...' : 'Click to upload images'}
+                    <p className="mb-2 text-sm text-slate-700 font-semibold">
+                      {uploading ? "Uploading..." : "Click to upload images"}
                     </p>
-                    <p className="text-xs text-gray-500">PNG, JPG, WEBP up to 10MB</p>
+                    <p className="text-xs text-gray-500">
+                      PNG, JPG, WEBP up to 10MB
+                    </p>
                   </div>
                   <input
                     type="file"
@@ -238,15 +271,26 @@ export default function NewProjectPage() {
                 </label>
               </div>
             </div>
-            
+
             {formData.images.length > 0 && (
               <div className="space-y-2">
-                <p className="text-sm font-medium text-gray-700">Uploaded Images ({formData.images.length}):</p>
+                <p className="text-sm font-medium text-gray-700">
+                  Uploaded Images ({formData.images.length}):
+                </p>
                 <div className="grid grid-cols-1 gap-3">
                   {formData.images.map((img, index) => (
-                    <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                      <img src={img} alt={`Preview ${index + 1}`} className="w-16 h-16 object-cover rounded" />
-                      <span className="flex-1 text-sm text-gray-600 truncate">{img}</span>
+                    <div
+                      key={index}
+                      className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200"
+                    >
+                      <img
+                        src={img}
+                        alt={`Preview ${index + 1}`}
+                        className="w-16 h-16 object-cover rounded"
+                      />
+                      <span className="flex-1 text-sm text-gray-600 truncate">
+                        {img}
+                      </span>
                       <button
                         type="button"
                         onClick={() => removeImage(index)}
@@ -266,10 +310,15 @@ export default function NewProjectPage() {
               type="checkbox"
               id="featured"
               checked={formData.featured}
-              onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
-              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              onChange={(e) =>
+                setFormData({ ...formData, featured: e.target.checked })
+              }
+              className="w-4 h-4 text-slate-700 border-gray-300 rounded focus:ring-slate-600"
             />
-            <label htmlFor="featured" className="ml-2 text-sm font-medium text-gray-700">
+            <label
+              htmlFor="featured"
+              className="ml-2 text-sm font-medium text-gray-700"
+            >
               Mark as Featured Project
             </label>
           </div>
@@ -278,9 +327,13 @@ export default function NewProjectPage() {
             <button
               type="submit"
               disabled={loading || uploading || formData.images.length === 0}
-              className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+              className="flex-1 bg-slate-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-slate-900 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
-              {loading ? 'Creating...' : uploading ? 'Uploading Images...' : 'Create Project'}
+              {loading
+                ? "Creating..."
+                : uploading
+                ? "Uploading Images..."
+                : "Create Project"}
             </button>
             <button
               type="button"

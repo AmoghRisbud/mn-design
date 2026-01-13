@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { Project } from '@/lib/types';
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { Project } from "@/lib/types";
 
 export default function AdminProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -14,34 +14,34 @@ export default function AdminProjectsPage() {
 
   const fetchProjects = async () => {
     try {
-      const res = await fetch('/api/projects');
+      const res = await fetch("/api/projects");
       if (res.ok) {
         const data = await res.json();
         setProjects(data);
       }
     } catch (error) {
-      console.error('Error fetching projects:', error);
+      console.error("Error fetching projects:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this project?')) return;
+    if (!confirm("Are you sure you want to delete this project?")) return;
 
     try {
       const res = await fetch(`/api/admin/projects/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (res.ok) {
-        setProjects(projects.filter(p => p.id !== id));
+        setProjects(projects.filter((p) => p.id !== id));
       } else {
-        alert('Failed to delete project');
+        alert("Failed to delete project");
       }
     } catch (error) {
-      console.error('Error deleting project:', error);
-      alert('Failed to delete project');
+      console.error("Error deleting project:", error);
+      alert("Failed to delete project");
     }
   };
 
@@ -53,9 +53,9 @@ export default function AdminProjectsPage() {
     <div>
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Manage Projects</h1>
-        <Link 
+        <Link
           href="/admin/projects/new"
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+          className="bg-slate-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-slate-900 transition-colors"
         >
           + Add New Project
         </Link>
@@ -64,9 +64,9 @@ export default function AdminProjectsPage() {
       {projects.length === 0 ? (
         <div className="bg-white p-12 rounded-lg shadow-md text-center">
           <p className="text-xl text-gray-600 mb-4">No projects yet</p>
-          <Link 
+          <Link
             href="/admin/projects/new"
-            className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+            className="inline-block bg-slate-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-slate-900 transition-colors"
           >
             Create Your First Project
           </Link>
@@ -100,10 +100,14 @@ export default function AdminProjectsPage() {
               {projects.map((project) => (
                 <tr key={project.id}>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{project.title}</div>
+                    <div className="text-sm font-medium text-gray-900">
+                      {project.title}
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm text-gray-600 capitalize">{project.category}</span>
+                    <span className="text-sm text-gray-600 capitalize">
+                      {project.category}
+                    </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                     {project.year}
@@ -125,7 +129,7 @@ export default function AdminProjectsPage() {
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                     <Link
                       href={`/admin/projects/edit/${project.id}`}
-                      className="text-blue-600 hover:text-blue-900"
+                      className="text-slate-700 hover:text-slate-900"
                     >
                       Edit
                     </Link>
