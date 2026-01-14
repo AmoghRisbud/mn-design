@@ -5,33 +5,13 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { HomeShowcase } from "@/lib/types";
 
 export default function HomePage() {
   const parallaxRef = useRef<HTMLDivElement>(null);
   const featuredRef = useRef<HTMLDivElement>(null);
-  const showcaseRef = useRef<HTMLDivElement>(null);
   const expertiseRef = useRef<HTMLDivElement>(null);
-  const [recentWorks, setRecentWorks] = useState<HomeShowcase[]>([]);
-  const [loading, setLoading] = useState(true);
   const [activeCardIndex, setActiveCardIndex] = useState(0);
   const [heroImageIndex, setHeroImageIndex] = useState(0);
-
-  useEffect(() => {
-    const fetchRecentWorks = async () => {
-      try {
-        const response = await fetch("/api/home-showcase");
-        const data: HomeShowcase[] = await response.json();
-        setRecentWorks(data.slice(0, 2)); // Limit to 2 items
-      } catch (error) {
-        console.error("Error fetching recent works:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRecentWorks();
-  }, []);
 
   // Auto-rotate hero background images
   useEffect(() => {
@@ -124,10 +104,27 @@ export default function HomePage() {
           element.classList.add("revealed");
         }
       });
+
+      // Slide-in animations for philosophy section - trigger every time section enters/exits view
+      const slideInElements = document.querySelectorAll(".slide-in-left, .slide-in-right");
+      slideInElements.forEach((element) => {
+        const rect = element.getBoundingClientRect();
+        const isVisible = rect.top < window.innerHeight - 100 && rect.bottom > 0;
+        
+        if (isVisible) {
+          // Add revealed class to trigger animation
+          element.classList.add("revealed");
+        } else {
+          // Remove class when element leaves view to reset animation
+          element.classList.remove("revealed");
+        }
+      });
     };
 
+    // Initial check on mount
+    handleScroll();
+
     window.addEventListener("scroll", handleScroll);
-    handleScroll(); // Initial check
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -237,45 +234,63 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Featured Project - Full Width Image */}
-        <section
-          ref={featuredRef}
-          className="relative h-[80vh] w-full scroll-reveal"
-        >
-          {/* IMAGE PLACEHOLDER 2: Featured project image (1920x1080px recommended) */}
-          <div className="absolute inset-0">
-            <Image
-              src="/images/sub-main.jpg"
-              alt="Delivering Quality"
-              fill
-              className="object-cover"
-            />
-          </div>
-
-          {/* Overlay gradient */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent"></div>
-
-          {/* Content */}
-          <div className="relative z-10 h-full flex items-center px-4 md:px-16 lg:px-24">
-            <div className="max-w-2xl">
-              <p className="text-gray-400 text-sm tracking-[0.3em] uppercase mb-4 font-light">
-                Delievering Quality
+        {/* Featured Projects Section */}
+        <section className="bg-white py-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Title Section */}
+            <div className="text-center mb-16 scroll-reveal">
+              <p className="text-gray-500 text-sm tracking-[0.3em] uppercase mb-4 font-light">
+                Our Projects
               </p>
-              <h2 className="text-5xl md:text-6xl lg:text-7xl font-light text-white mb-6 leading-tight">
-                Modern
-                <br />
-                Excellence
+              <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-6">
+                Featured Categories
               </h2>
-              <p className="text-gray-300 text-lg mb-8 leading-relaxed max-w-xl">
-                Visit our project portfolio to see how MN Design integrates
-                sustainable design principles with cutting-edge architecture.
-              </p>
+              <div className="w-16 h-px bg-gray-300 mx-auto"></div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Residential Card */}
               <Link
-                href="/projects"
-                className="inline-flex items-center gap-3 text-white group"
+                href="/category/residential"
+                className="group relative h-[400px] overflow-hidden rounded-xl"
               >
-                <span className="text-sm tracking-wider">VIEW PROJECT</span>
-                <div className="w-12 h-px bg-white group-hover:w-24 transition-all duration-500"></div>
+                <Image
+                  src="/images/residential-bg.jpg"
+                  alt="Residential Projects"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-500"></div>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <h3 className="text-4xl font-light text-white mb-6">
+                    Residential
+                  </h3>
+                  <button className="px-6 py-2 border border-white text-white hover:bg-white hover:text-black transition-colors duration-300 text-sm tracking-wider font-light">
+                    Click here
+                  </button>
+                </div>
+              </Link>
+
+              {/* Commercial Card */}
+              <Link
+                href="/category/commercial"
+                className="group relative h-[400px] overflow-hidden rounded-xl"
+              >
+                <Image
+                  src="/images/commercial-bg.jpg"
+                  alt="Commercial Projects"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-500"></div>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <h3 className="text-4xl font-light text-white mb-6">
+                    Commercial
+                  </h3>
+                  <button className="px-6 py-2 border border-white text-white hover:bg-white hover:text-black transition-colors duration-300 text-sm tracking-wider font-light">
+                    Click here
+                  </button>
+                </div>
               </Link>
             </div>
           </div>
@@ -338,39 +353,37 @@ export default function HomePage() {
 
                   return (
                     <div key={index} className={`expertise-card ${cardClass}`}>
-                      <div className="w-full max-w-3xl px-8 md:px-16">
-                        <div className="flex items-start gap-8 md:gap-16">
-                          {/* Number indicator - like Artel Studios */}
-                          <div className="flex-shrink-0 pt-2">
-                            <span className="text-7xl md:text-8xl font-light text-blue-600/15">
-                              {String(index + 1).padStart(2, "0")}
-                            </span>
-                          </div>
+                      <div className="bg-gray-100 rounded-2xl p-10 w-96 h-96 flex flex-col justify-between">
+                        {/* Number */}
+                        <div>
+                          <span className="text-6xl font-light text-gray-900">
+                            {String(index + 1).padStart(2, "0")}
+                          </span>
+                        </div>
 
-                          {/* Content */}
-                          <div className="flex-1">
-                            <div className="mb-8">
-                              <svg
-                                className="w-16 h-16 text-blue-600"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={1.5}
-                                  d={card.icon}
-                                />
-                              </svg>
-                            </div>
-                            <h3 className="text-4xl md:text-5xl font-light mb-6 text-gray-900">
-                              {card.title}
-                            </h3>
-                            <p className="text-gray-600 leading-relaxed text-lg max-w-2xl">
-                              {card.description}
-                            </p>
+                        {/* Icon and Title */}
+                        <div>
+                          <div className="mb-6">
+                            <svg
+                              className="w-12 h-12 text-blue-600"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={1.5}
+                                d={card.icon}
+                              />
+                            </svg>
                           </div>
+                          <h3 className="text-2xl font-light mb-4 text-gray-900">
+                            {card.title}
+                          </h3>
+                          <p className="text-gray-600 leading-relaxed text-sm">
+                            {card.description}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -397,99 +410,11 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Project Showcase - Grid with Images */}
-        <section ref={showcaseRef} className="py-32 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20 scroll-reveal">
-            <div className="flex justify-between items-end">
-              <div>
-                <p className="text-gray-500 text-sm tracking-[0.3em] uppercase mb-4 font-light">
-                  Portfolio
-                </p>
-                <h2 className="text-5xl md:text-6xl font-light text-gray-900">
-                  Recent Work
-                </h2>
-              </div>
-              <Link
-                href="/projects"
-                className="hidden md:flex items-center gap-3 text-gray-900 group"
-              >
-                <span className="text-sm tracking-wider">
-                  VIEW ALL PROJECTS
-                </span>
-                <div className="w-12 h-px bg-gray-900 group-hover:w-24 transition-all duration-500"></div>
-              </Link>
-            </div>
-          </div>
-
-          {loading ? (
-            <div className="flex items-center justify-center h-[60vh]">
-              <div className="text-gray-400 text-lg">Loading projects...</div>
-            </div>
-          ) : recentWorks.length === 0 ? (
-            <div className="flex items-center justify-center h-[60vh]">
-              <div className="text-center">
-                <p className="text-gray-400 text-lg mb-4">
-                  No showcase items yet
-                </p>
-                <p className="text-gray-500 text-sm">
-                  Go to Admin → Home Showcase to add items
-                </p>
-              </div>
-            </div>
-          ) : (
-            <div
-              className={`grid grid-cols-1 ${
-                recentWorks.length === 2 ? "md:grid-cols-2" : ""
-              } gap-0`}
-            >
-              {recentWorks.map((item, index) => (
-                <Link
-                  key={item.id}
-                  href={
-                    item.projectId ? `/projects/${item.projectId}` : "/projects"
-                  }
-                  className="group relative h-[60vh] overflow-hidden scroll-reveal"
-                  style={{ animationDelay: index === 1 ? "200ms" : "0ms" }}
-                >
-                  {/* Showcase Image */}
-                  <Image
-                    src={item.image}
-                    alt={item.title}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-
-                  <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-700"></div>
-
-                  <div className="absolute bottom-0 left-0 right-0 p-12 text-white transform translate-y-8 group-hover:translate-y-0 transition-transform duration-500">
-                    <p className="text-sm tracking-widest mb-2 opacity-80 uppercase">
-                      {item.category}
-                    </p>
-                    <h3 className="text-3xl font-light mb-4">{item.title}</h3>
-                    <div className="w-0 group-hover:w-16 h-px bg-white transition-all duration-500"></div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-
-          <div className="mt-12 text-center md:hidden">
-            <Link
-              href="/projects"
-              className="inline-flex items-center gap-3 text-gray-900"
-            >
-              <span className="text-sm tracking-wider">VIEW ALL PROJECTS</span>
-              <div className="w-12 h-px bg-gray-900"></div>
-            </Link>
-          </div>
-        </section>
-
         {/* Philosophy Section */}
         <section className="py-32 bg-white scroll-reveal">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-              <div>
+              <div className="slide-in-left">
                 <p className="text-gray-500 text-sm tracking-[0.3em] uppercase mb-6 font-light">
                   Our Approach
                 </p>
@@ -521,7 +446,7 @@ export default function HomePage() {
               </div>
 
               {/* IMAGE PLACEHOLDER 5: Philosophy/About image (800x1000px recommended - portrait) */}
-              <div className="relative h-[600px] lg:h-[700px]">
+              <div className="relative h-[600px] lg:h-[700px] slide-in-right">
                 <div className="relative w-full h-full overflow-hidden">
                   <Image
                     src="/images/design-philosophy.jpg"

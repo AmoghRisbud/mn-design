@@ -104,34 +104,11 @@ export default async function AdminDashboard() {
             >
               Manage Projects
             </Link>
-            <Link
-              href="/admin/home-showcase"
-              className="block w-full bg-purple-600 text-white px-4 py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors text-center"
-            >
-              🏠 Manage Home Showcase
-            </Link>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">
-            Homepage Management
-          </h2>
-          <p className="text-gray-600 mb-4">
-            Control what appears in the Recent Work section on your homepage.
-            Add, edit, or remove showcase items to highlight your best projects.
-          </p>
-          <Link
-            href="/admin/home-showcase"
-            className="text-purple-600 hover:text-purple-800 font-semibold"
-          >
-            Manage Home Showcase →
-          </Link>
-        </div>
-      </div>
-
-      <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Welcome</h2>
+        <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Welcome</h2>
         <p className="text-gray-600 mb-4">
           Welcome to the MN Design admin panel. From here you can manage your
           projects, view enquiries, and update your portfolio.
