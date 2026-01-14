@@ -29,52 +29,78 @@ export default function HomePage() {
   // Scroll-driven horizontal card transitions - proper locking
   useEffect(() => {
     let isTransitioning = false;
+    let scrollAccumulator = 0;
+    const scrollThreshold = 150; // High threshold - full wheel scroll needed
+    let lastScrollTime = Date.now();
 
     const handleWheel = (e: WheelEvent) => {
-      if (!expertiseRef.current || isTransitioning) return;
+      if (!expertiseRef.current || isTransitioning) {
+        // Block all scroll during transition
+        if (isTransitioning) e.preventDefault();
+        return;
+      }
 
       const section = expertiseRef.current;
       const rect = section.getBoundingClientRect();
 
-      // More aggressive viewport detection
+      // More precise viewport detection - section must be centered
       const isInView =
-        rect.top < window.innerHeight * 0.4 &&
-        rect.bottom > window.innerHeight * 0.2;
+        rect.top < window.innerHeight * 0.5 &&
+        rect.bottom > window.innerHeight * 0.5;
 
       if (isInView) {
+        const now = Date.now();
+        const timeSinceLastScroll = now - lastScrollTime;
+
+        // Reset accumulator if user paused scrolling (more than 200ms gap)
+        if (timeSinceLastScroll > 200) {
+          scrollAccumulator = 0;
+        }
+
+        lastScrollTime = now;
+
+        // Accumulate scroll delta
+        scrollAccumulator += Math.abs(e.deltaY);
+
         const scrollingDown = e.deltaY > 0;
         const scrollingUp = e.deltaY < 0;
 
-        // Only allow scrolling if we haven't reached the end
-        if (
-          (scrollingDown && activeCardIndex < 3) ||
-          (scrollingUp && activeCardIndex > 0)
-        ) {
-          e.preventDefault();
-          e.stopPropagation();
-          isTransitioning = true;
+        // Check if we can move cards
+        const canMoveForward = scrollingDown && activeCardIndex < 3;
+        const canMoveBackward = scrollingUp && activeCardIndex > 0;
 
-          if (scrollingDown) {
-            console.log(
-              "→ Card transition:",
-              activeCardIndex,
-              "→",
-              activeCardIndex + 1
-            );
-            setActiveCardIndex((prev) => Math.min(prev + 1, 3));
-          } else {
-            console.log(
-              "← Card transition:",
-              activeCardIndex,
-              "→",
-              activeCardIndex - 1
-            );
-            setActiveCardIndex((prev) => Math.max(prev - 1, 0));
+        if (canMoveForward || canMoveBackward) {
+          e.preventDefault(); // Always prevent scroll in this section
+
+          // Only trigger card change when threshold is reached
+          if (scrollAccumulator >= scrollThreshold) {
+            isTransitioning = true;
+            scrollAccumulator = 0; // Reset immediately
+
+            if (scrollingDown) {
+              console.log(
+                "→ Card transition:",
+                activeCardIndex,
+                "→",
+                activeCardIndex + 1
+              );
+              setActiveCardIndex((prev) => Math.min(prev + 1, 3));
+            } else {
+              console.log(
+                "← Card transition:",
+                activeCardIndex,
+                "→",
+                activeCardIndex - 1
+              );
+              setActiveCardIndex((prev) => Math.max(prev - 1, 0));
+            }
+
+            // Lock for full transition duration
+            setTimeout(() => {
+              isTransitioning = false;
+              scrollAccumulator = 0; // Ensure clean state
+            }, 1200);
           }
-
-          setTimeout(() => {
-            isTransitioning = false;
-          }, 850);
         }
       }
     };
