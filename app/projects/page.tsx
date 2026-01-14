@@ -72,7 +72,11 @@ export default function ProjectsPage() {
             {categories.map((category) => (
               <Link
                 key={category.id}
-                href={category.id === "all" ? "/projects" : `/category/${category.id}`}
+                href={
+                  category.id === "all"
+                    ? "/projects"
+                    : `/category/${category.id}`
+                }
                 className={`px-6 py-2 text-sm tracking-wider font-light transition-all duration-300 border-2 rounded-full ${
                   selectedCategory === category.id
                     ? "bg-slate-900 text-white border-slate-900"

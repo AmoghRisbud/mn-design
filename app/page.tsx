@@ -106,11 +106,14 @@ export default function HomePage() {
       });
 
       // Slide-in animations for philosophy section - trigger every time section enters/exits view
-      const slideInElements = document.querySelectorAll(".slide-in-left, .slide-in-right");
+      const slideInElements = document.querySelectorAll(
+        ".slide-in-left, .slide-in-right"
+      );
       slideInElements.forEach((element) => {
         const rect = element.getBoundingClientRect();
-        const isVisible = rect.top < window.innerHeight - 100 && rect.bottom > 0;
-        
+        const isVisible =
+          rect.top < window.innerHeight - 100 && rect.bottom > 0;
+
         if (isVisible) {
           // Add revealed class to trigger animation
           element.classList.add("revealed");
