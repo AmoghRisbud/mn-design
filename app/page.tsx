@@ -22,9 +22,6 @@ export default function HomePage() {
     return () => clearInterval(heroInterval);
   }, []);
 
-
-
-
   useEffect(() => {
     const handleScroll = () => {
       const scrolled = window.scrollY;
@@ -343,7 +340,9 @@ export default function HomePage() {
                   href="/about"
                   className="inline-flex items-center gap-3 text-gray-900 mt-8 sm:mt-10 group"
                 >
-                  <span className="text-xs sm:text-sm tracking-wider">LEARN MORE</span>
+                  <span className="text-xs sm:text-sm tracking-wider">
+                    LEARN MORE
+                  </span>
                   <div className="w-12 h-px bg-gray-900 group-hover:w-24 transition-all duration-500"></div>
                 </Link>
               </div>
