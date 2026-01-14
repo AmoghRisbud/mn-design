@@ -109,11 +109,12 @@ export default async function AdminDashboard() {
 
         <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-bold text-gray-900 mb-4">Welcome</h2>
-        <p className="text-gray-600 mb-4">
-          Welcome to the MN Design admin panel. From here you can manage your
-          projects, view enquiries, and update your portfolio.
-        </p>
-        <p className="text-sm text-gray-500">User ID: {userId}</p>
+          <p className="text-gray-600 mb-4">
+            Welcome to the MN Design admin panel. From here you can manage your
+            projects, view enquiries, and update your portfolio.
+          </p>
+          <p className="text-sm text-gray-500">User ID: {userId}</p>
+        </div>
       </div>
     </div>
   );

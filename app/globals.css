@@ -130,6 +130,39 @@ body {
   transform: translateY(0);
 }
 
+/* Hero text animations - trigger on scroll */
+.hero-text {
+  opacity: 0;
+  transform: translateY(60px);
+  transition: opacity 1s ease-out, transform 1s ease-out;
+}
+
+.hero-text.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered delays for hero text elements */
+.hero-text:nth-child(1) {
+  transition-delay: 0ms;
+}
+
+.hero-text:nth-child(2) {
+  transition-delay: 200ms;
+}
+
+.hero-text:nth-child(3) {
+  transition-delay: 400ms;
+}
+
+.hero-text:nth-child(4) {
+  transition-delay: 600ms;
+}
+
+.hero-text:nth-child(5) {
+  transition-delay: 800ms;
+}
+
 /* Expertise Card Carousel - Horizontal Scroll Effect (Like Artel Studios) */
 .expertise-cards-wrapper {
   position: relative;
@@ -253,4 +286,48 @@ html {
   opacity: 1;
   transform: translateX(0);
   transition: opacity 0.8s ease-out, transform 1.6s ease-out;
+}
+
+/* Expertise layered card: subtle premium motion and crisp rendering */
+.expertise-card-layer {
+  will-change: transform, opacity;
+  transition: transform 120ms linear, opacity 120ms linear;
+  backface-visibility: hidden;
+}
+
+/* IntersectionObserver-based vertical reveal cards below hero */
+.io-card {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 1s ease-out, transform 1s ease-out;
+}
+
+.io-card.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Gentle stagger for a calm, sequential reveal */
+.io-card:nth-child(1).is-visible {
+  transition-delay: 0s;
+}
+
+.io-card:nth-child(2).is-visible {
+  transition-delay: 120ms;
+}
+
+.io-card:nth-child(3).is-visible {
+  transition-delay: 240ms;
+}
+
+.io-card:nth-child(4).is-visible {
+  transition-delay: 360ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .io-card {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
 }

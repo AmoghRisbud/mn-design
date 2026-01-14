@@ -43,10 +43,10 @@ export default function CategoryPage() {
   const getCategoryImage = () => {
     // Map category to background images
     const imageMap: Record<string, string> = {
-      residential: "/images/residential-bg.jpg",
-      commercial: "/images/commercial-bg.jpg",
-      institutional: "/images/heroSection-main.jpg",
-      industrial: "/images/heroSection-hero2.jpg",
+      residential: "/images/ResidentalProBG.jpg",
+      commercial: "/images/industrialPro.png",
+      institutional: "/images/InstitutionalPro.png",
+      industrial: "/images/commercialPro.png",
     };
     return imageMap[category] || "/images/heroSection-main.jpg";
   };
@@ -55,27 +55,15 @@ export default function CategoryPage() {
     <>
       <Navbar />
       <main className="min-h-screen">
-        {/* Hero Section with Category Title */}
+        {/* Hero Section with Category Image */}
         <section className="relative h-[70vh] w-full overflow-hidden bg-white">
-          {/* Text Content - Above Image */}
-          <div className="relative z-20 h-full flex flex-col items-center justify-start pt-20 px-4">
-            <div className="text-center max-w-6xl mx-auto">
-              <h1 className="text-7xl md:text-8xl lg:text-[10rem] font-light text-gray-300/40 tracking-tight mb-0 uppercase leading-none">
-                {getCategoryTitle()}
-              </h1>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-gray-700 tracking-widest uppercase -mt-4">
-                PROJECTS
-              </h2>
-            </div>
-          </div>
-
-          {/* Building Image - Below Text */}
-          <div className="absolute bottom-0 left-0 right-0 h-[60%] z-10">
+          {/* Full Category Image with built-in text */}
+          <div className="absolute inset-0">
             <Image
               src={getCategoryImage()}
               alt={`${getCategoryTitle()} Projects`}
               fill
-              className="object-cover object-top"
+              className="object-contain"
               priority
             />
           </div>

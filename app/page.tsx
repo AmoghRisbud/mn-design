@@ -1,5 +1,4 @@
 "use client";
-
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
@@ -8,9 +7,6 @@ import Footer from "@/components/Footer";
 
 export default function HomePage() {
   const parallaxRef = useRef<HTMLDivElement>(null);
-  const featuredRef = useRef<HTMLDivElement>(null);
-  const expertiseRef = useRef<HTMLDivElement>(null);
-  const [activeCardIndex, setActiveCardIndex] = useState(0);
   const [heroImageIndex, setHeroImageIndex] = useState(0);
 
   // Auto-rotate hero background images
@@ -26,91 +22,8 @@ export default function HomePage() {
     return () => clearInterval(heroInterval);
   }, []);
 
-  // Scroll-driven horizontal card transitions - proper locking
-  useEffect(() => {
-    let isTransitioning = false;
-    let scrollAccumulator = 0;
-    const scrollThreshold = 150; // High threshold - full wheel scroll needed
-    let lastScrollTime = Date.now();
 
-    const handleWheel = (e: WheelEvent) => {
-      if (!expertiseRef.current || isTransitioning) {
-        // Block all scroll during transition
-        if (isTransitioning) e.preventDefault();
-        return;
-      }
 
-      const section = expertiseRef.current;
-      const rect = section.getBoundingClientRect();
-
-      // More precise viewport detection - section must be centered
-      const isInView =
-        rect.top < window.innerHeight * 0.5 &&
-        rect.bottom > window.innerHeight * 0.5;
-
-      if (isInView) {
-        const now = Date.now();
-        const timeSinceLastScroll = now - lastScrollTime;
-
-        // Reset accumulator if user paused scrolling (more than 200ms gap)
-        if (timeSinceLastScroll > 200) {
-          scrollAccumulator = 0;
-        }
-
-        lastScrollTime = now;
-
-        // Accumulate scroll delta
-        scrollAccumulator += Math.abs(e.deltaY);
-
-        const scrollingDown = e.deltaY > 0;
-        const scrollingUp = e.deltaY < 0;
-
-        // Check if we can move cards
-        const canMoveForward = scrollingDown && activeCardIndex < 3;
-        const canMoveBackward = scrollingUp && activeCardIndex > 0;
-
-        if (canMoveForward || canMoveBackward) {
-          e.preventDefault(); // Always prevent scroll in this section
-
-          // Only trigger card change when threshold is reached
-          if (scrollAccumulator >= scrollThreshold) {
-            isTransitioning = true;
-            scrollAccumulator = 0; // Reset immediately
-
-            if (scrollingDown) {
-              console.log(
-                "→ Card transition:",
-                activeCardIndex,
-                "→",
-                activeCardIndex + 1
-              );
-              setActiveCardIndex((prev) => Math.min(prev + 1, 3));
-            } else {
-              console.log(
-                "← Card transition:",
-                activeCardIndex,
-                "→",
-                activeCardIndex - 1
-              );
-              setActiveCardIndex((prev) => Math.max(prev - 1, 0));
-            }
-
-            // Lock for full transition duration
-            setTimeout(() => {
-              isTransitioning = false;
-              scrollAccumulator = 0; // Ensure clean state
-            }, 1200);
-          }
-        }
-      }
-    };
-
-    window.addEventListener("wheel", handleWheel, { passive: false });
-
-    return () => {
-      window.removeEventListener("wheel", handleWheel);
-    };
-  }, [activeCardIndex]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -120,6 +33,20 @@ export default function HomePage() {
       if (parallaxRef.current) {
         parallaxRef.current.style.transform = `translateY(${scrolled * 0.5}px)`;
       }
+
+      // Hero text animations - trigger every time hero is in view
+      const heroTextElements = document.querySelectorAll(".hero-text");
+      heroTextElements.forEach((element) => {
+        const rect = element.getBoundingClientRect();
+        const isVisible =
+          rect.top < window.innerHeight - 100 && rect.bottom > 100;
+
+        if (isVisible) {
+          element.classList.add("revealed");
+        } else {
+          element.classList.remove("revealed");
+        }
+      });
 
       // Fade-in animations
       const elements = document.querySelectorAll(".scroll-reveal");
@@ -167,7 +94,7 @@ export default function HomePage() {
           <div ref={parallaxRef} className="absolute inset-0">
             {/* Hero Image 1 */}
             <div
-              className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
+              className={`absolute inset-0 transition-all duration-700 ease-in-out ${
                 heroImageIndex === 0 ? "opacity-100" : "opacity-0"
               }`}
               style={{ pointerEvents: heroImageIndex === 0 ? "auto" : "none" }}
@@ -183,7 +110,7 @@ export default function HomePage() {
 
             {/* Hero Image 2 */}
             <div
-              className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
+              className={`absolute inset-0 transition-all duration-700 ease-in-out ${
                 heroImageIndex === 1 ? "opacity-100" : "opacity-0"
               }`}
               style={{ pointerEvents: heroImageIndex === 1 ? "auto" : "none" }}
@@ -198,7 +125,7 @@ export default function HomePage() {
 
             {/* Hero Image 3 */}
             <div
-              className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
+              className={`absolute inset-0 transition-all duration-700 ease-in-out ${
                 heroImageIndex === 2 ? "opacity-100" : "opacity-0"
               }`}
               style={{ pointerEvents: heroImageIndex === 2 ? "auto" : "none" }}
@@ -216,35 +143,35 @@ export default function HomePage() {
           </div>
 
           {/* Hero Content */}
-          <div className="relative z-10 h-full flex items-center justify-center px-4">
+          <div className="relative z-10 h-full flex items-center justify-center px-4 sm:px-6">
             <div className="text-center max-w-6xl mx-auto">
-              <div className="overflow-hidden mb-6">
-                <h1 className="text-7xl md:text-8xl lg:text-9xl font-light text-white tracking-tight animate-slide-up drop-shadow-2xl">
+              <div className="overflow-hidden mb-4 sm:mb-6">
+                <h1 className="hero-text text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-light text-white tracking-tight drop-shadow-2xl">
                   MN DESIGN
                 </h1>
               </div>
-              <div className="overflow-hidden mb-8">
-                <p className="text-xl md:text-2xl text-white font-light tracking-[0.3em] uppercase animate-slide-up animation-delay-300 drop-shadow-lg">
+              <div className="overflow-hidden mb-6 sm:mb-8">
+                <p className="hero-text text-sm sm:text-base md:text-xl lg:text-2xl text-white font-light tracking-[0.2em] sm:tracking-[0.3em] uppercase drop-shadow-lg">
                   Architecture & Design Studio
                 </p>
               </div>
-              <div className="h-px w-32 bg-white/50 mx-auto mb-12 animate-fade-in animation-delay-600"></div>
+              <div className="hero-text h-px w-20 sm:w-32 bg-white/50 mx-auto mb-8 sm:mb-12"></div>
               <div className="overflow-hidden">
-                <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed mb-12 animate-slide-up animation-delay-600 drop-shadow-lg">
+                <p className="hero-text text-sm sm:text-base md:text-lg lg:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed mb-8 sm:mb-12 px-4 drop-shadow-lg">
                   Creating timeless spaces that blend innovative design with
                   functional elegance
                 </p>
               </div>
-              <div className="flex gap-6 justify-center animate-fade-in animation-delay-900">
+              <div className="hero-text flex gap-4 sm:gap-6 justify-center">
                 <Link
                   href="/projects"
-                  className="group relative px-8 py-4 overflow-hidden border-2 border-white text-white hover:text-black transition-colors duration-500"
+                  className="group relative px-6 py-3 sm:px-8 sm:py-4 overflow-hidden border-2 border-white text-white hover:text-black transition-colors duration-500"
                 >
                   <span className="absolute inset-0 bg-white transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500"></span>
-                  <span className="relative flex items-center gap-2 font-light tracking-wider">
+                  <span className="relative flex items-center gap-2 font-light tracking-wider text-sm sm:text-base">
                     EXPLORE PROJECTS
                     <svg
-                      className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300"
+                      className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-2 transition-transform duration-300"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -263,25 +190,86 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* Studio Highlights - Scroll-based Card Reveal */}
+        <section className="bg-white py-12 sm:py-16 md:py-24">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mb-8 sm:mb-12 text-center">
+              <p className="text-gray-500 text-xs sm:text-sm tracking-[0.2em] sm:tracking-[0.3em] uppercase mb-3 sm:mb-4 font-light">
+                Studio Highlights
+              </p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 mb-3 sm:mb-4 px-4">
+                Thoughtful Spaces, Crafted with Care
+              </h2>
+              <p className="text-gray-600 max-w-2xl mx-auto text-sm md:text-base leading-relaxed px-4">
+                A brief look into how we approach every projectfrom concept to
+                completionwith precision, clarity, and a focus on timeless
+                design.
+              </p>
+            </div>
+
+            <div className="space-y-4 sm:space-y-6 md:space-y-8">
+              {[
+                {
+                  title: "Context-Driven Concepts",
+                  body: "Every proposal begins with a deep understanding of site, climate, and client narrative, ensuring each space feels authentic and grounded.",
+                },
+                {
+                  title: "Material Honesty",
+                  body: "We prioritise natural textures, refined details, and durable finishes that age gracefully and elevate daily experience.",
+                },
+                {
+                  title: "Light & Proportion",
+                  body: "Carefully considered light, shadow, and scale create quiet moments of calm and clarity throughout each project.",
+                },
+                {
+                  title: "Integrated Delivery",
+                  body: "From early sketches to on-site coordination, we remain closely involved to protect the integrity of the design vision.",
+                },
+              ].map((card, index) => (
+                <div
+                  key={card.title}
+                  className={`bg-gray-50 rounded-xl sm:rounded-2xl px-4 py-5 sm:px-6 sm:py-6 md:px-8 md:py-8 shadow-sm border border-gray-100 ${
+                    index % 2 === 0 ? "slide-in-left" : "slide-in-right"
+                  }`}
+                >
+                  <div className="flex items-start gap-3 sm:gap-4">
+                    <span className="text-xs sm:text-sm md:text-base font-light tracking-[0.2em] sm:tracking-[0.3em] text-gray-400 mt-1">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <div>
+                      <h3 className="text-lg sm:text-xl md:text-2xl font-light text-gray-900 mb-2 sm:mb-3">
+                        {card.title}
+                      </h3>
+                      <p className="text-gray-600 text-sm md:text-base leading-relaxed">
+                        {card.body}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* Featured Projects Section */}
-        <section className="bg-white py-20">
+        <section className="bg-white py-12 sm:py-16 md:py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Title Section */}
-            <div className="text-center mb-16 scroll-reveal">
-              <p className="text-gray-500 text-sm tracking-[0.3em] uppercase mb-4 font-light">
+            <div className="text-center mb-8 sm:mb-12 md:mb-16 scroll-reveal">
+              <p className="text-gray-500 text-xs sm:text-sm tracking-[0.2em] sm:tracking-[0.3em] uppercase mb-3 sm:mb-4 font-light">
                 Our Projects
               </p>
-              <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-6">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-gray-900 mb-4 sm:mb-6 px-4">
                 Featured Categories
               </h2>
               <div className="w-16 h-px bg-gray-300 mx-auto"></div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
               {/* Residential Card */}
               <Link
                 href="/category/residential"
-                className="group relative h-[400px] overflow-hidden rounded-xl"
+                className="group relative h-[300px] sm:h-[350px] md:h-[400px] overflow-hidden rounded-lg sm:rounded-xl slide-in-left"
               >
                 <Image
                   src="/images/residential-bg.jpg"
@@ -291,10 +279,10 @@ export default function HomePage() {
                 />
                 <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-500"></div>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <h3 className="text-4xl font-light text-white mb-6">
+                  <h3 className="text-3xl sm:text-4xl font-light text-white mb-4 sm:mb-6">
                     Residential
                   </h3>
-                  <button className="px-6 py-2 border border-white text-white hover:bg-white hover:text-black transition-colors duration-300 text-sm tracking-wider font-light">
+                  <button className="px-5 py-2 sm:px-6 border border-white text-white hover:bg-white hover:text-black transition-colors duration-300 text-xs sm:text-sm tracking-wider font-light">
                     Click here
                   </button>
                 </div>
@@ -303,7 +291,7 @@ export default function HomePage() {
               {/* Commercial Card */}
               <Link
                 href="/category/commercial"
-                className="group relative h-[400px] overflow-hidden rounded-xl"
+                className="group relative h-[300px] sm:h-[350px] md:h-[400px] overflow-hidden rounded-lg sm:rounded-xl slide-in-right"
               >
                 <Image
                   src="/images/commercial-bg.jpg"
@@ -313,10 +301,10 @@ export default function HomePage() {
                 />
                 <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-500"></div>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <h3 className="text-4xl font-light text-white mb-6">
+                  <h3 className="text-3xl sm:text-4xl font-light text-white mb-4 sm:mb-6">
                     Commercial
                   </h3>
-                  <button className="px-6 py-2 border border-white text-white hover:bg-white hover:text-black transition-colors duration-300 text-sm tracking-wider font-light">
+                  <button className="px-5 py-2 sm:px-6 border border-white text-white hover:bg-white hover:text-black transition-colors duration-300 text-xs sm:text-sm tracking-wider font-light">
                     Click here
                   </button>
                 </div>
@@ -325,134 +313,20 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Services Section - Card Carousel */}
-        <section ref={expertiseRef} className="bg-white py-32">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-24 scroll-reveal">
-              <p className="text-gray-500 text-sm tracking-[0.3em] uppercase mb-4 font-light">
-                What We Do
-              </p>
-              <h2 className="text-5xl md:text-6xl font-light text-gray-900 mb-6">
-                Our Expertise
-              </h2>
-              <div className="w-16 h-px bg-gray-300 mx-auto"></div>
-            </div>
-
-            {/* Card Carousel Container */}
-            <div className="relative mx-auto max-w-3xl">
-              <div
-                className="expertise-cards-wrapper relative"
-                style={{ minHeight: "500px" }}
-              >
-                {[
-                  {
-                    icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
-                    title: "Residential",
-                    description:
-                      "Bespoke homes that reflect your lifestyle and aspirations",
-                  },
-                  {
-                    icon: "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4",
-                    title: "Commercial",
-                    description:
-                      "Innovative spaces that drive business success",
-                  },
-                  {
-                    icon: "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253",
-                    title: "Institutional",
-                    description: "Public spaces designed for community impact",
-                  },
-                  {
-                    icon: "M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7",
-                    title: "Urban Planning",
-                    description:
-                      "Strategic development for sustainable communities",
-                  },
-                ].map((card, index) => {
-                  // Determine card position for horizontal carousel
-                  let cardClass = "card-hidden";
-
-                  if (index === activeCardIndex) {
-                    cardClass = "card-active"; // Current visible card
-                  } else if (index < activeCardIndex) {
-                    cardClass = "card-before"; // Cards already seen (go left)
-                  } else {
-                    cardClass = "card-next"; // Cards coming up (from right)
-                  }
-
-                  return (
-                    <div key={index} className={`expertise-card ${cardClass}`}>
-                      <div className="bg-gray-100 rounded-2xl p-10 w-96 h-96 flex flex-col justify-between">
-                        {/* Number */}
-                        <div>
-                          <span className="text-6xl font-light text-gray-900">
-                            {String(index + 1).padStart(2, "0")}
-                          </span>
-                        </div>
-
-                        {/* Icon and Title */}
-                        <div>
-                          <div className="mb-6">
-                            <svg
-                              className="w-12 h-12 text-blue-600"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={1.5}
-                                d={card.icon}
-                              />
-                            </svg>
-                          </div>
-                          <h3 className="text-2xl font-light mb-4 text-gray-900">
-                            {card.title}
-                          </h3>
-                          <p className="text-gray-600 leading-relaxed text-sm">
-                            {card.description}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Progress Indicators */}
-              <div className="flex justify-center gap-3 mt-12">
-                {[0, 1, 2, 3].map((index) => (
-                  <button
-                    key={index}
-                    onClick={() => setActiveCardIndex(index)}
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      activeCardIndex === index
-                        ? "w-12 bg-blue-600"
-                        : "w-2 bg-gray-300 hover:bg-gray-400"
-                    }`}
-                    aria-label={`Go to card ${index + 1}`}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* Philosophy Section */}
-        <section className="py-32 bg-white scroll-reveal">
+        <section className="py-12 sm:py-16 md:py-24 lg:py-32 bg-white scroll-reveal">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 md:gap-16 lg:gap-20 items-center">
               <div className="slide-in-left">
-                <p className="text-gray-500 text-sm tracking-[0.3em] uppercase mb-6 font-light">
+                <p className="text-gray-500 text-xs sm:text-sm tracking-[0.2em] sm:tracking-[0.3em] uppercase mb-4 sm:mb-6 font-light">
                   Our Approach
                 </p>
-                <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-8 leading-tight">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-gray-900 mb-6 sm:mb-8 leading-tight">
                   Design Philosophy
                   <br />
                   Rooted in Excellence
                 </h2>
-                <div className="space-y-6 text-gray-600 leading-relaxed">
+                <div className="space-y-4 sm:space-y-6 text-gray-600 text-sm sm:text-base leading-relaxed">
                   <p>
                     At MN Design, we believe architecture is more than creating
                     structures—it's about crafting experiences that inspire,
@@ -467,15 +341,15 @@ export default function HomePage() {
                 </div>
                 <Link
                   href="/about"
-                  className="inline-flex items-center gap-3 text-gray-900 mt-10 group"
+                  className="inline-flex items-center gap-3 text-gray-900 mt-8 sm:mt-10 group"
                 >
-                  <span className="text-sm tracking-wider">LEARN MORE</span>
+                  <span className="text-xs sm:text-sm tracking-wider">LEARN MORE</span>
                   <div className="w-12 h-px bg-gray-900 group-hover:w-24 transition-all duration-500"></div>
                 </Link>
               </div>
 
               {/* IMAGE PLACEHOLDER 5: Philosophy/About image (800x1000px recommended - portrait) */}
-              <div className="relative h-[600px] lg:h-[700px] slide-in-right">
+              <div className="relative h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] slide-in-right">
                 <div className="relative w-full h-full overflow-hidden">
                   <Image
                     src="/images/design-philosophy.jpg"
@@ -491,7 +365,7 @@ export default function HomePage() {
         </section>
 
         {/* CTA Section - Full Width */}
-        <section className="relative h-[70vh] w-full scroll-reveal">
+        <section className="relative h-[60vh] sm:h-[65vh] md:h-[70vh] w-full scroll-reveal">
           {/* IMAGE PLACEHOLDER 6: CTA background image (1920x800px recommended) */}
           <div className="absolute inset-0">
             <Image
@@ -503,29 +377,29 @@ export default function HomePage() {
           </div>
           <div className="absolute inset-0 bg-black/65"></div>
 
-          <div className="relative z-10 h-full flex items-center justify-center px-4">
+          <div className="relative z-10 h-full flex items-center justify-center px-4 sm:px-6">
             <div className="text-center max-w-4xl mx-auto">
-              <p className="text-white/80 text-sm tracking-[0.3em] uppercase mb-6 font-light drop-shadow-lg">
+              <p className="text-white/80 text-xs sm:text-sm tracking-[0.2em] sm:tracking-[0.3em] uppercase mb-4 sm:mb-6 font-light drop-shadow-lg">
                 Let's Collaborate
               </p>
-              <h2 className="text-5xl md:text-6xl lg:text-7xl font-light text-white mb-8 leading-tight drop-shadow-2xl">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light text-white mb-6 sm:mb-8 leading-tight drop-shadow-2xl px-4">
                 Start Your Project
                 <br />
                 With Us
               </h2>
-              <p className="text-xl text-white/90 mb-12 max-w-2xl mx-auto leading-relaxed drop-shadow-lg">
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-white/90 mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed drop-shadow-lg px-4">
                 Transform your vision into reality with our expert team of
                 architects and designers
               </p>
               <Link
                 href="/contact"
-                className="group relative inline-block px-12 py-5 overflow-hidden border-2 border-white text-white hover:text-black transition-colors duration-500"
+                className="group relative inline-block px-8 py-3 sm:px-10 sm:py-4 md:px-12 md:py-5 overflow-hidden border-2 border-white text-white hover:text-black transition-colors duration-500"
               >
                 <span className="absolute inset-0 bg-white transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500"></span>
-                <span className="relative flex items-center gap-3 font-light tracking-widest text-sm">
+                <span className="relative flex items-center gap-2 sm:gap-3 font-light tracking-widest text-xs sm:text-sm">
                   GET IN TOUCH
                   <svg
-                    className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300"
+                    className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-2 transition-transform duration-300"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"

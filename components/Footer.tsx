@@ -14,7 +14,7 @@ export default function Footer() {
             <div className="flex gap-4 pt-4">
               <a
                 href="#"
-                className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-500 hover:scale-110 transition-all duration-200"
+                className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-gray-600 hover:scale-110 transition-all duration-200"
               >
                 <svg
                   className="w-5 h-5"
@@ -26,7 +26,7 @@ export default function Footer() {
               </a>
               <a
                 href="#"
-                className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-500 hover:scale-110 transition-all duration-200"
+                className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-gray-600 hover:scale-110 transition-all duration-200"
               >
                 <svg
                   className="w-5 h-5"
@@ -38,7 +38,7 @@ export default function Footer() {
               </a>
               <a
                 href="#"
-                className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-500 hover:scale-110 transition-all duration-200"
+                className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-gray-600 hover:scale-110 transition-all duration-200"
               >
                 <svg
                   className="w-5 h-5"
@@ -52,7 +52,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-xl font-semibold mb-6 text-blue-400">
+            <h4 className="text-xl font-semibold mb-6 text-white">
               Quick Links
             </h4>
             <ul className="space-y-3">
@@ -144,13 +144,13 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-xl font-semibold mb-6 text-blue-400">
+            <h4 className="text-xl font-semibold mb-6 text-white">
               Contact Info
             </h4>
             <ul className="space-y-4 text-gray-300">
               <li className="flex items-start gap-3 group">
                 <svg
-                  className="w-5 h-5 text-blue-400 mt-0.5 group-hover:scale-110 transition-transform"
+                  className="w-5 h-5 text-gray-400 mt-0.5 group-hover:scale-110 transition-transform"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -166,7 +166,7 @@ export default function Footer() {
               </li>
               <li className="flex items-start gap-3 group">
                 <svg
-                  className="w-5 h-5 text-blue-400 mt-0.5 group-hover:scale-110 transition-transform"
+                  className="w-5 h-5 text-gray-400 mt-0.5 group-hover:scale-110 transition-transform"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -182,7 +182,7 @@ export default function Footer() {
               </li>
               <li className="flex items-start gap-3 group">
                 <svg
-                  className="w-5 h-5 text-blue-400 mt-0.5 group-hover:scale-110 transition-transform"
+                  className="w-5 h-5 text-gray-400 mt-0.5 group-hover:scale-110 transition-transform"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
