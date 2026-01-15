@@ -12,10 +12,57 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* ===== MOBILE-FIRST BASE STYLES ===== */
+/* Prevent horizontal overflow globally */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden;
+  width: 100%;
+  scroll-behavior: smooth;
+}
+
 body {
   background: #ffffff;
   color: #171717;
   font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+  width: 100%;
+  /* Mobile-first: minimum readable font size */
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Desktop: Increase base font size */
+@media (min-width: 768px) {
+  body {
+    font-size: 16px;
+  }
+}
+
+/* ===== MOBILE-FRIENDLY TOUCH TARGETS ===== */
+/* Ensure all interactive elements are at least 44px */
+button,
+a,
+input[type="button"],
+input[type="submit"] {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* ===== RESPONSIVE IMAGE DEFAULTS ===== */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ===== PREVENT OVERFLOW IN CONTAINERS ===== */
+.container,
+section,
+div {
+  max-width: 100%;
 }
 
 /* Hero Background Image Transitions */

@@ -1,26 +1,31 @@
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import Image from 'next/image';
-import { Project } from '@/lib/types';
-import { notFound } from 'next/navigation';
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import Image from "next/image";
+import { Project } from "@/lib/types";
+import { notFound } from "next/navigation";
 
 async function getProject(id: string): Promise<Project | null> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/projects/${id}`, {
-      cache: 'no-store',
-    });
+    const res = await fetch(
+      `${
+        process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+      }/api/projects/${id}`,
+      {
+        cache: "no-store",
+      }
+    );
     if (!res.ok) return null;
     return res.json();
   } catch (error) {
-    console.error('Error fetching project:', error);
+    console.error("Error fetching project:", error);
     return null;
   }
 }
 
-export default async function ProjectDetailPage({ 
-  params 
-}: { 
-  params: Promise<{ id: string }> 
+export default async function ProjectDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
   const project = await getProject(id);
@@ -32,40 +37,81 @@ export default async function ProjectDetailPage({
   return (
     <>
       <Navbar />
-      <main className="min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm text-blue-600 font-medium uppercase px-3 py-1 bg-blue-50 rounded-full">
+      {/* Mobile-first overflow prevention */}
+      <main className="min-h-screen w-full max-w-full overflow-x-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16">
+          {/* Project Header - Mobile-friendly spacing */}
+          <div className="mb-6 sm:mb-8">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 sm:mb-4 gap-2">
+              <span className="text-xs sm:text-sm text-blue-600 font-medium uppercase px-2 py-1 sm:px-3 bg-blue-50 rounded-full inline-block w-fit">
                 {project.category}
               </span>
-              <span className="text-gray-600">{project.year}</span>
+              <span className="text-sm sm:text-base text-gray-600">
+                {project.year}
+              </span>
             </div>
-            
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+
+            {/* Mobile-friendly title */}
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-5 md:mb-6">
               {project.title}
             </h1>
-            
-            <div className="flex flex-wrap gap-6 text-gray-600 mb-6">
+
+            {/* Mobile: Stack vertically, Desktop: Inline */}
+            <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-6 text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">
               <div className="flex items-center">
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                <svg
+                  className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
                 </svg>
                 {project.location}
               </div>
               {project.area && (
                 <div className="flex items-center">
-                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                  <svg
+                    className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
+                    />
                   </svg>
                   {project.area}
                 </div>
               )}
               {project.client && (
                 <div className="flex items-center">
-                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  <svg
+                    className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
                   </svg>
                   Client: {project.client}
                 </div>
@@ -73,24 +119,30 @@ export default async function ProjectDetailPage({
             </div>
           </div>
 
-          {/* Image Gallery */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+          {/* Image Gallery - Mobile: 1 col, Desktop: 2 cols */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-6 mb-8 sm:mb-10 md:mb-12">
             {project.images.map((image, index) => (
-              <div key={index} className="relative h-80 rounded-lg overflow-hidden shadow-lg">
+              <div
+                key={index}
+                className="relative h-48 sm:h-64 md:h-80 rounded-lg overflow-hidden shadow-lg"
+              >
                 <Image
                   src={image}
                   alt={`${project.title} - Image ${index + 1}`}
                   fill
                   className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
                 />
               </div>
             ))}
           </div>
 
-          {/* Description */}
-          <div className="prose max-w-none">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Project Overview</h2>
-            <p className="text-gray-700 text-lg leading-relaxed whitespace-pre-line">
+          {/* Description - Mobile-friendly typography */}
+          <div className="prose prose-sm sm:prose-base lg:prose-lg max-w-none">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">
+              Project Overview
+            </h2>
+            <p className="text-gray-700 text-sm sm:text-base lg:text-lg leading-relaxed whitespace-pre-line">
               {project.description}
             </p>
           </div>

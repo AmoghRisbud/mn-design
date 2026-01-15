@@ -84,9 +84,10 @@ export default function HomePage() {
   return (
     <>
       <Navbar />
-      <main className="overflow-hidden">
-        {/* Hero Section - Full Width Image Placeholder */}
-        <section className="relative h-screen w-full overflow-hidden">
+      {/* Mobile-first overflow prevention */}
+      <main className="overflow-hidden w-full max-w-full">
+        {/* Hero Section - Mobile-first responsive height */}
+        <section className="relative h-[70vh] sm:h-[80vh] md:h-screen w-full overflow-hidden">
           {/* Rotating Hero Images */}
           <div ref={parallaxRef} className="absolute inset-0">
             {/* Hero Image 1 */}
@@ -102,6 +103,7 @@ export default function HomePage() {
                 fill
                 className="object-cover"
                 priority
+                sizes="100vw"
               />
             </div>
 
@@ -117,6 +119,7 @@ export default function HomePage() {
                 alt="MN Design Architecture 2"
                 fill
                 className="object-cover"
+                sizes="100vw"
               />
             </div>
 
@@ -132,6 +135,7 @@ export default function HomePage() {
                 alt="MN Design Architecture 3"
                 fill
                 className="object-cover"
+                sizes="100vw"
               />
             </div>
 
@@ -139,33 +143,34 @@ export default function HomePage() {
             <div className="absolute inset-0 bg-black/60"></div>
           </div>
 
-          {/* Hero Content */}
+          {/* Hero Content - Mobile-first sizing */}
           <div className="relative z-10 h-full flex items-center justify-center px-4 sm:px-6">
-            <div className="text-center max-w-6xl mx-auto">
-              <div className="overflow-hidden mb-4 sm:mb-6">
-                <h1 className="hero-text text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-light text-white tracking-tight drop-shadow-2xl">
+            <div className="text-center max-w-6xl mx-auto w-full">
+              <div className="overflow-hidden mb-3 sm:mb-4 md:mb-6">
+                <h1 className="hero-text text-3xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-light text-white tracking-tight drop-shadow-2xl">
                   MN DESIGN
                 </h1>
               </div>
-              <div className="overflow-hidden mb-6 sm:mb-8">
-                <p className="hero-text text-sm sm:text-base md:text-xl lg:text-2xl text-white font-light tracking-[0.2em] sm:tracking-[0.3em] uppercase drop-shadow-lg">
+              <div className="overflow-hidden mb-4 sm:mb-6 md:mb-8">
+                <p className="hero-text text-xs sm:text-sm md:text-lg lg:text-xl xl:text-2xl text-white font-light tracking-[0.2em] sm:tracking-[0.3em] uppercase drop-shadow-lg">
                   Architecture & Design Studio
                 </p>
               </div>
-              <div className="hero-text h-px w-20 sm:w-32 bg-white/50 mx-auto mb-8 sm:mb-12"></div>
+              <div className="hero-text h-px w-16 sm:w-24 md:w-32 bg-white/50 mx-auto mb-6 sm:mb-8 md:mb-12"></div>
               <div className="overflow-hidden">
-                <p className="hero-text text-sm sm:text-base md:text-lg lg:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed mb-8 sm:mb-12 px-4 drop-shadow-lg">
+                <p className="hero-text text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed mb-6 sm:mb-8 md:mb-12 px-4 drop-shadow-lg">
                   Creating timeless spaces that blend innovative design with
                   functional elegance
                 </p>
               </div>
-              <div className="hero-text flex gap-4 sm:gap-6 justify-center">
+              {/* Mobile-friendly button with touch-friendly sizing */}
+              <div className="hero-text flex gap-3 sm:gap-4 md:gap-6 justify-center">
                 <Link
                   href="/projects"
-                  className="group relative px-6 py-3 sm:px-8 sm:py-4 overflow-hidden border-2 border-white text-white hover:text-black transition-colors duration-500"
+                  className="group relative px-5 py-3 sm:px-6 sm:py-3 md:px-8 md:py-4 overflow-hidden border-2 border-white text-white hover:text-black transition-colors duration-500 min-h-[44px] flex items-center"
                 >
                   <span className="absolute inset-0 bg-white transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500"></span>
-                  <span className="relative flex items-center gap-2 font-light tracking-wider text-sm sm:text-base">
+                  <span className="relative flex items-center gap-2 font-light tracking-wider text-xs sm:text-sm md:text-base">
                     EXPLORE PROJECTS
                     <svg
                       className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-2 transition-transform duration-300"
@@ -363,8 +368,8 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* CTA Section - Full Width */}
-        <section className="relative h-[60vh] sm:h-[65vh] md:h-[70vh] w-full scroll-reveal">
+        {/* CTA Section - Mobile-first responsive height */}
+        <section className="relative h-[50vh] sm:h-[60vh] md:h-[65vh] lg:h-[70vh] w-full scroll-reveal">
           {/* IMAGE PLACEHOLDER 6: CTA background image (1920x800px recommended) */}
           <div className="absolute inset-0">
             <Image
@@ -372,27 +377,30 @@ export default function HomePage() {
               alt="Contact Us"
               fill
               className="object-cover"
+              sizes="100vw"
             />
           </div>
           <div className="absolute inset-0 bg-black/65"></div>
 
+          {/* Mobile-friendly content with better spacing */}
           <div className="relative z-10 h-full flex items-center justify-center px-4 sm:px-6">
-            <div className="text-center max-w-4xl mx-auto">
-              <p className="text-white/80 text-xs sm:text-sm tracking-[0.2em] sm:tracking-[0.3em] uppercase mb-4 sm:mb-6 font-light drop-shadow-lg">
+            <div className="text-center max-w-4xl mx-auto w-full">
+              <p className="text-white/80 text-xs sm:text-sm tracking-[0.2em] sm:tracking-[0.3em] uppercase mb-3 sm:mb-4 md:mb-6 font-light drop-shadow-lg">
                 Let's Collaborate
               </p>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light text-white mb-6 sm:mb-8 leading-tight drop-shadow-2xl px-4">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-light text-white mb-4 sm:mb-6 md:mb-8 leading-tight drop-shadow-2xl px-4">
                 Start Your Project
                 <br />
                 With Us
               </h2>
-              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-white/90 mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed drop-shadow-lg px-4">
+              <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-white/90 mb-6 sm:mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed drop-shadow-lg px-4">
                 Transform your vision into reality with our expert team of
                 architects and designers
               </p>
+              {/* Touch-friendly button with proper sizing */}
               <Link
                 href="/contact"
-                className="group relative inline-block px-8 py-3 sm:px-10 sm:py-4 md:px-12 md:py-5 overflow-hidden border-2 border-white text-white hover:text-black transition-colors duration-500"
+                className="group relative inline-flex items-center px-6 py-3 sm:px-8 sm:py-3 md:px-10 md:py-4 lg:px-12 lg:py-5 overflow-hidden border-2 border-white text-white hover:text-black transition-colors duration-500 min-h-[44px]"
               >
                 <span className="absolute inset-0 bg-white transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500"></span>
                 <span className="relative flex items-center gap-2 sm:gap-3 font-light tracking-widest text-xs sm:text-sm">
